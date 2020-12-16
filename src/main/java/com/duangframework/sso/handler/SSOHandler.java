@@ -2,6 +2,7 @@ package com.duangframework.sso.handler;
 
 import com.duangframework.exception.MvcException;
 import com.duangframework.kit.Prop;
+import com.duangframework.kit.ToolsKit;
 import com.duangframework.mvc.http.HttpSession;
 import com.duangframework.mvc.http.IRequest;
 import com.duangframework.mvc.http.IResponse;
@@ -10,6 +11,7 @@ import com.duangframework.sso.common.Const;
 import com.duangframework.sso.core.SSOContext;
 import com.duangframework.sso.core.SSOFilter;
 import com.duangframework.sso.core.SSOFilterChain;
+import com.duangframework.sso.core.SSOUserData;
 import com.duangframework.sso.exceptions.SSOException;
 import com.duangframework.sso.filter.AbstractFilter;
 import org.slf4j.Logger;
@@ -19,6 +21,9 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Properties;
 
+/**
+ * SSO Handler
+ */
 public class SSOHandler implements IHandler {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(SSOHandler.class);
@@ -86,16 +91,25 @@ public class SSOHandler implements IHandler {
                     SSOFilterChain ssoChain = new SSOFilterChain(context);
                     ssoChain.doNextFilter();
                     if (ssoChain.isFinish()) {
-                        ClientAuthenticationHandler authenticationHandler = new ClientAuthenticationHandler(prop);
-                        authenticationHandler.doHandler(target, request, response);
-                        context.setParameter(Const.SSO_USER_NAME_FIELD, context.getCurrentUsername());
+                        SSOUserData userData = SSOUserData.getInstance();
+                        if (userData.isUserChanged()) {
+                            String ssoUserName = userData.getCurrentUsername();
+                            userData.acceptUserChange();
+                            if (ssoUserName != null && ssoUserName.length() > 0) {
+                                String paramsName = prop.getProperty(Const.LOGIN_PARAM_NAME);
+                                if (ToolsKit.isEmpty(paramsName)) {
+                                    paramsName = Const.SSO_USERNAME;
+                                }
+                                LOGGER.warn("将SSO验证通过后，返回的用户名[{}]设置到请求对象参数[{}]中", ssoUserName, paramsName);
+                                request.setAttribute(paramsName, ssoUserName);
+                            }
+                        }
                     }
-                } catch (SSOException ssoException) {
-                    throw ssoException;
+                } catch (Exception ssoException) {
+                    throw new SSOException(ssoException.getMessage(), ssoException);
                 } finally {
                     SSOContext.removeThreadLocal();
                 }
-
             }
         }
     }

@@ -42,4 +42,11 @@ public class Const {
      * URL的编码格式
      */
     public static final String URL_CHARSET = "login.UrlCharset";
+
+    /**
+     * sso 登录验证完成后，透传到登录接口的参数名
+     */
+    public static final String LOGIN_PARAM_NAME = "login.param.name";
+
+    public static final String SSO_USERNAME = "SSO_UserName";
 }
