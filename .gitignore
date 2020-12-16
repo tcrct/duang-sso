@@ -37,3 +37,4 @@ AppTest.java
 logs
 httpRequests
 .shelf
+/test/

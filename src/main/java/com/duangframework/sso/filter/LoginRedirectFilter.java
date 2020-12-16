@@ -8,11 +8,15 @@ import com.duangframework.sso.core.SSOContext;
 import com.duangframework.sso.core.SSOFilterChain;
 import com.duangframework.sso.exceptions.SSOException;
 import com.duangframework.sso.utils.CommonUtils2;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
-import java.net.URLEncoder;
 import java.util.Properties;
 
 public class LoginRedirectFilter extends AbstractFilter {
+
+    private static final Logger LOGGER = LoggerFactory.getLogger(LoginRedirectFilter.class);
+
     private String loginURL;
     private String noRedirectURLs;
     private String URLCharset;
@@ -36,29 +40,12 @@ public class LoginRedirectFilter extends AbstractFilter {
         IRequest request = context.getRequest();
         IResponse response = context.getResponse();
         String username = context.getCurrentUsername();
-        boolean needRedirect = ToolsKit.isEmpty(username);
-        if (needRedirect) {
-            needRedirect = !CommonUtils2.checkPath(request, this.noRedirectURLs);
-        }
 
-        if (needRedirect) {
-            String requestURL = request.getRequestURL();
-            String queryString = request.getQueryString();
-            if (ToolsKit.isNotEmpty(queryString)) {
-                requestURL = requestURL + "?" + queryString;
-            }
-
-            if (ToolsKit.isNotEmpty(this.URLCharset)) {
-                try {
-                    requestURL = URLEncoder.encode(requestURL, this.URLCharset);
-                } catch (Exception e) {
-                    throw new SSOException(e.getMessage(), e);
-                }
-            }
-
-            String redirectTo = this.loginURL.replace("${URL}", requestURL);
+        String redirectTo = CommonUtils2.createRedirectUrl(request, this.loginURL, this.noRedirectURLs, username, this.URLCharset);
+        if (ToolsKit.isNotEmpty(redirectTo)) {
+            LOGGER.warn("redirect url: {}", redirectTo);
             response.redirect(redirectTo);
-            return;
+            throw new SSOException("redirect url");
         } else {
             chain.doNextFilter();
         }

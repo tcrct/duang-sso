@@ -3,6 +3,7 @@ package com.duangframework.sso.handler;
 import com.duangframework.exception.MvcException;
 import com.duangframework.kit.Prop;
 import com.duangframework.mvc.http.HttpSession;
+import com.duangframework.mvc.http.HttpSessionManager;
 import com.duangframework.mvc.http.IRequest;
 import com.duangframework.mvc.http.IResponse;
 import com.duangframework.mvc.http.handler.IHandler;
@@ -10,7 +11,9 @@ import com.duangframework.sso.common.Const;
 import com.duangframework.sso.core.SSOContext;
 import com.duangframework.sso.core.SSOFilter;
 import com.duangframework.sso.core.SSOFilterChain;
+import com.duangframework.sso.exceptions.SSOException;
 import com.duangframework.sso.filter.AbstractFilter;
+import com.duangframework.sso.utils.CommonUtils2;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -69,8 +72,9 @@ public class SSOHandler implements IHandler {
         if (SSO_FILTERS != null && SSO_FILTERS.length != 0) {
             HttpSession session = request.getSession();
             if (null == session) {
-                LOGGER.warn("无法获取Session对象，SSO客户端无法正常运行！直接跳转到SSO单点服务器登录");
-            } else {
+                LOGGER.warn("无法获取Session对象，SSO客户端无法正常运行！");
+            }
+            else {
                 Map parameter = (Map) session.getAttribute(SSOHandler.class.getName());
                 if (parameter == null) {
                     parameter = new HashMap();
@@ -88,8 +92,8 @@ public class SSOHandler implements IHandler {
                         authenticationHandler.doHandler(target, request, response);
                         context.setParameter(Const.SSO_USER_NAME_FIELD, context.getCurrentUsername());
                     }
-                } catch (Exception e) {
-                    LOGGER.warn(e.getMessage(), e);
+                } catch (SSOException ssoException) {
+                    throw ssoException;
                 } finally {
                     SSOContext.removeThreadLocal();
                 }

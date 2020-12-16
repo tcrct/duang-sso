@@ -3,10 +3,12 @@ package com.duangframework.sso.utils;
 import com.duangframework.kit.ToolsKit;
 import com.duangframework.mvc.http.IRequest;
 import com.duangframework.mvc.http.IResponse;
+import com.duangframework.sso.exceptions.SSOException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import javax.servlet.http.HttpServletRequest;
+import java.net.URLEncoder;
 
 public class CommonUtils2 {
 
@@ -116,4 +118,38 @@ public class CommonUtils2 {
         }
     }
 
+
+    /**
+     * 创建重定向URL地址
+     * @param request 请求对象
+     * @param loginURL SSO登录服务器地址
+     * @param noRedirectURLs 不进行重定向的URL地址，多个用;号分隔
+     * @param username 登录名
+     * @param URLCharset URL 编码格式
+     * @return
+     */
+    public static String createRedirectUrl(IRequest request, String loginURL, String noRedirectURLs, String username, String URLCharset) {
+        boolean needRedirect = ToolsKit.isEmpty(username);
+        if (needRedirect) {
+            needRedirect = !CommonUtils2.checkPath(request, noRedirectURLs);
+        }
+
+        if (needRedirect) {
+            String requestURL = request.getRequestURL();
+            String queryString = request.getQueryString();
+            if (ToolsKit.isNotEmpty(queryString)) {
+                requestURL = requestURL + "?" + queryString;
+            }
+
+            if (ToolsKit.isNotEmpty(URLCharset)) {
+                try {
+                    requestURL = URLEncoder.encode(requestURL, URLCharset);
+                } catch (Exception e) {
+                    throw new SSOException(e.getMessage(), e);
+                }
+            }
+            return loginURL.replace("${URL}", requestURL);
+        }
+        return "";
+    }
 }
