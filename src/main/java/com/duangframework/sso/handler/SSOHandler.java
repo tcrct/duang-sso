@@ -12,7 +12,6 @@ import com.duangframework.sso.core.SSOFilter;
 import com.duangframework.sso.core.SSOFilterChain;
 import com.duangframework.sso.exceptions.SSOException;
 import com.duangframework.sso.filter.AbstractFilter;
-import com.duangframework.sso.utils.CommonUtils2;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
