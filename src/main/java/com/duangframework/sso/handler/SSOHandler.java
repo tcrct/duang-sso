@@ -3,7 +3,6 @@ package com.duangframework.sso.handler;
 import com.duangframework.exception.MvcException;
 import com.duangframework.kit.Prop;
 import com.duangframework.mvc.http.HttpSession;
-import com.duangframework.mvc.http.HttpSessionManager;
 import com.duangframework.mvc.http.IRequest;
 import com.duangframework.mvc.http.IResponse;
 import com.duangframework.mvc.http.handler.IHandler;
