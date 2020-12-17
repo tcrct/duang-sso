@@ -1,16 +1,14 @@
 package com.duangframework.sso.filter;
 
 import com.duangframework.kit.ToolsKit;
-import com.duangframework.mvc.http.HttpSession;
-import com.duangframework.mvc.http.HttpSessionManager;
 import com.duangframework.mvc.http.IRequest;
 import com.duangframework.mvc.http.IResponse;
+import com.duangframework.mvc.http.session.HttpSession;
 import com.duangframework.sso.common.Const;
 import com.duangframework.sso.core.SSOContext;
 import com.duangframework.sso.core.SSOFilterChain;
 import com.duangframework.sso.exceptions.SSOException;
 import com.duangframework.sso.utils.CommonUtils2;
-import io.netty.util.internal.StringUtil;
 import org.jasig.cas.client.util.CommonUtils;
 import org.jasig.cas.client.util.XmlUtils;
 import org.jasig.cas.client.validation.Assertion;
@@ -85,7 +83,7 @@ public class CasUrlFilter extends AbstractFilter{
             if (LOGGER.isDebugEnabled()) {
                 LOGGER.debug("从URL中获取到的{}参数为：{}", this.ticketParameterName, ticket);
             }
-            String serviceURL = CommonUtils2.constructServiceUrl(request, response, (String)null, localServerName, this.ticketParameterName, false);
+            String serviceURL = CommonUtils2.constructServiceUrl(request, response, null, localServerName, this.ticketParameterName, false);
 
             try {
                 String username = null;
