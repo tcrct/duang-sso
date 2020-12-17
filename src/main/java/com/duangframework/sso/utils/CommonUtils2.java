@@ -131,7 +131,7 @@ public class CommonUtils2 {
     public static String createRedirectUrl(IRequest request, String loginURL, String noRedirectURLs, String username, String URLCharset) {
         boolean needRedirect = ToolsKit.isEmpty(username);
         if (needRedirect) {
-            needRedirect = !CommonUtils2.checkPath(request, noRedirectURLs);
+            needRedirect = !checkPath(request, noRedirectURLs);
         }
 
         if (needRedirect) {

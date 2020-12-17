@@ -48,5 +48,5 @@ public class Const {
      */
     public static final String LOGIN_PARAM_NAME = "login.param.name";
 
-    public static final String SSO_USERNAME = "SSO_UserName";
+    public static String SSO_USERNAME = "SSO_UserName";
 }

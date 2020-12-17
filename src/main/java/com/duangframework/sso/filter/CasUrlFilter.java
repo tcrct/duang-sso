@@ -79,7 +79,8 @@ public class CasUrlFilter extends AbstractFilter{
         IRequest request = context.getRequest();
         IResponse response = context.getResponse();
         String ticket = request.getParameter(this.ticketParameterName);
-        if (!ToolsKit.isEmpty(ticket) && !this.sessionMap.containsKey(ticket)) {
+        // ticket不为空且存在本地缓存中，则请求SSO服务器验证ticket是否合法
+        if (ToolsKit.isNotEmpty(ticket) && !this.sessionMap.containsKey(ticket)) {
             String localServerName = request.getRemoteHost();
             if (LOGGER.isDebugEnabled()) {
                 LOGGER.debug("从URL中获取到的{}参数为：{}", this.ticketParameterName, ticket);
@@ -106,6 +107,7 @@ public class CasUrlFilter extends AbstractFilter{
             }
 
             chain.doNextFilter();
+            // 添加到本地缓存中
             if (chain.isFinish() && ticket != null) {
                 this.sessionMap.put(ticket, request.getSession());
             }

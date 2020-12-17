@@ -29,7 +29,7 @@ public class SSOContext {
     /**
      *  初始化到threadLocal
      * @param originUsername 原来的名字
-     * @param parameter map集合
+     * @param parameter HttpSession map集合
      * @param request 请求对象
      * @param response 返回对象
      * @return
@@ -44,7 +44,7 @@ public class SSOContext {
      * 移除
      */
     public static void removeThreadLocal() {
-        instance.set((Object)null);
+        instance.remove();
     }
 
     protected SSOContext(String originUsername, Map parameter, IRequest request, IResponse response) {

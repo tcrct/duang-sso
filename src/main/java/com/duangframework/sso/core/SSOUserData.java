@@ -7,7 +7,14 @@ import java.io.Serializable;
 
 public class SSOUserData implements Serializable {
     private static final long serialVersionUID = -4963191787310836638L;
+
+    /**
+     * 当前用户名
+     */
     private String currentUsername;
+    /**
+     * 原来的用户名
+     */
     private String originUsername;
 
     public static SSOUserData getInstance() {

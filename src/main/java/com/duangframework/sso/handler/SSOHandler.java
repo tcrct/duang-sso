@@ -23,6 +23,8 @@ import java.util.Properties;
 
 /**
  * SSO Handler
+ *
+ * @author Laotang
  */
 public class SSOHandler implements IHandler {
 
@@ -97,11 +99,11 @@ public class SSOHandler implements IHandler {
                             userData.acceptUserChange();
                             if (ssoUserName != null && ssoUserName.length() > 0) {
                                 String paramsName = prop.getProperty(Const.LOGIN_PARAM_NAME);
-                                if (ToolsKit.isEmpty(paramsName)) {
-                                    paramsName = Const.SSO_USERNAME;
+                                if (ToolsKit.isNotEmpty(paramsName)) {
+                                    Const.SSO_USERNAME = paramsName;
                                 }
-                                LOGGER.warn("将SSO验证通过后，返回的用户名[{}]设置到请求对象参数[{}]中", ssoUserName, paramsName);
-                                request.setAttribute(paramsName, ssoUserName);
+                                LOGGER.warn("将SSO验证通过后，返回的用户名[{}]设置到请求对象参数[{}]中", ssoUserName, Const.SSO_USERNAME);
+                                request.setAttribute(Const.SSO_USERNAME, ssoUserName);
                             }
                         }
                     }

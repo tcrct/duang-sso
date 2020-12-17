@@ -40,11 +40,12 @@ public class LoginRedirectFilter extends AbstractFilter {
         IRequest request = context.getRequest();
         IResponse response = context.getResponse();
         String username = context.getCurrentUsername();
-
+        // 根据username是否为空判断是否创建重定向URL，如果重定向URL不为空，则重定向
         String redirectTo = CommonUtils2.createRedirectUrl(request, this.loginURL, this.noRedirectURLs, username, this.URLCharset);
         if (ToolsKit.isNotEmpty(redirectTo)) {
             LOGGER.warn("redirect url: {}", redirectTo);
             response.redirect(redirectTo);
+            //中止线程往下执行
             throw new SSOException("redirect url");
         } else {
             chain.doNextFilter();

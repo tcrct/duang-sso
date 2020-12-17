@@ -3,6 +3,9 @@ package com.duangframework.sso.core;
 import com.duangframework.sso.exceptions.SSOException;
 import com.duangframework.sso.handler.SSOHandler;
 
+/**
+ * 过滤器链条
+ */
 public class SSOFilterChain {
 
     private SSOContext context;
