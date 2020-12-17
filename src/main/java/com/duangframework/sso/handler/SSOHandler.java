@@ -78,16 +78,16 @@ public class SSOHandler implements IHandler {
             HttpSession session = request.getSession();
             if (null == session) {
                 LOGGER.warn("无法获取Session对象，SSO客户端无法正常运行！");
-            }
-            else {
-                Map parameter = (Map) session.getAttribute(SSOHandler.class.getName());
+                return false;
+            } else {
+                Map<String, Object> parameter = session.getAttribute(SSOHandler.class.getName());
                 if (parameter == null) {
                     parameter = new HashMap();
                     session.setAttribute(SSOHandler.class.getName(), parameter);
                 }
 
-                String username = (String) ((Map) parameter).get(Const.SSO_USER_NAME_FIELD);
-                SSOContext context = SSOContext.initThreadLocal(username, parameter, request, response);
+                String userName = String.valueOf(parameter.get(Const.SSO_USER_NAME_FIELD));
+                SSOContext context = SSOContext.initThreadLocal(userName, parameter, request, response);
 
                 try {
                     SSOFilterChain ssoChain = new SSOFilterChain(context);
@@ -103,10 +103,13 @@ public class SSOHandler implements IHandler {
                                 if (ToolsKit.isNotEmpty(paramsName)) {
                                     Const.SSO_USERNAME = paramsName;
                                 }
-                                userData.setAccessKey(accessKey);
+                                if (ToolsKit.isNotEmpty(accessKey)) {
+                                    Const.AK = accessKey;
+                                }
                                 LOGGER.warn("将SSO验证通过后，返回的用户名[{}]设置到请求对象参数[{}]中", ssoUserName, Const.SSO_USERNAME);
                                 request.setAttribute(Const.SSO_USERNAME, ssoUserName);
                                 request.setAttribute(Const.ACCESS_KEY, accessKey);
+                                context.setParameter(Const.SSO_USER_NAME_FIELD, ssoUserName);
                             }
                         }
                     }

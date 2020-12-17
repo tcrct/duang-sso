@@ -16,7 +16,7 @@ public class SSOUtils {
         String ssoUserName = (String)request.getAttribute(Const.SSO_USERNAME);
         if (ToolsKit.isNotEmpty(ssoUserName)) {
             String accessKey = (String)request.getAttribute(Const.ACCESS_KEY);
-            if (SSOUserData.getInstance().getAccessKey().equals(accessKey)) {
+            if (Const.AK.equals(accessKey)) {
                 return ssoUserName;
             }
         }
