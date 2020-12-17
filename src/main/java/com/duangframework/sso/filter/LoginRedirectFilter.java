@@ -45,8 +45,8 @@ public class LoginRedirectFilter extends AbstractFilter {
         if (ToolsKit.isNotEmpty(redirectTo)) {
             LOGGER.warn("redirect url: {}", redirectTo);
             response.redirect(redirectTo);
-            //中止线程往下执行
-            throw new SSOException("redirect url");
+            //终止线程往下执行
+            throw new SSOException(Const.REDIRECT_URL);
         } else {
             chain.doNextFilter();
         }

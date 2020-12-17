@@ -71,7 +71,7 @@ public class SSOHandler implements IHandler {
     }
 
     @Override
-    public void doHandler(String target, IRequest request, IResponse response) throws MvcException {
+    public boolean doHandler(String target, IRequest request, IResponse response) throws MvcException {
 
         // 转换成 Servlet 的 Request
         if (SSO_FILTERS != null && SSO_FILTERS.length != 0) {
@@ -99,20 +99,29 @@ public class SSOHandler implements IHandler {
                             userData.acceptUserChange();
                             if (ssoUserName != null && ssoUserName.length() > 0) {
                                 String paramsName = prop.getProperty(Const.LOGIN_PARAM_NAME);
+                                String accessKey = prop.getProperty(Const.ACCESS_KEY);
                                 if (ToolsKit.isNotEmpty(paramsName)) {
                                     Const.SSO_USERNAME = paramsName;
                                 }
+                                userData.setAccessKey(accessKey);
                                 LOGGER.warn("将SSO验证通过后，返回的用户名[{}]设置到请求对象参数[{}]中", ssoUserName, Const.SSO_USERNAME);
                                 request.setAttribute(Const.SSO_USERNAME, ssoUserName);
+                                request.setAttribute(Const.ACCESS_KEY, accessKey);
                             }
                         }
                     }
                 } catch (Exception ssoException) {
-                    throw new SSOException(ssoException.getMessage(), ssoException);
+                    // 重定向
+                    if (Const.REDIRECT_URL. equals(ssoException.getMessage())) {
+                        return false;
+                    } else {
+                        throw new SSOException(ssoException.getMessage(), ssoException);
+                    }
                 } finally {
                     SSOContext.removeThreadLocal();
                 }
             }
         }
+        return true;
     }
 }

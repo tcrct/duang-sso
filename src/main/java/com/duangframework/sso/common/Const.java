@@ -49,4 +49,7 @@ public class Const {
     public static final String LOGIN_PARAM_NAME = "login.param.name";
 
     public static String SSO_USERNAME = "SSO_UserName";
+
+    public static final String ACCESS_KEY = "duang_sso_access_key";
+    public static final String REDIRECT_URL = "duang_sso_redirect_url";
 }

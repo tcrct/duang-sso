@@ -17,6 +17,11 @@ public class SSOUserData implements Serializable {
      */
     private String originUsername;
 
+    /**
+     *  访问Key
+     */
+    private String accessKey;
+
     public static SSOUserData getInstance() {
         SSOContext context = SSOContext.getInstance();
         SSOUserData data = (SSOUserData)context.getParameter(Const.SSO_USER_DATA_FIELD);
@@ -62,5 +67,13 @@ public class SSOUserData implements Serializable {
 
     public void setCurrentUsername(String currentUsername) {
         this.currentUsername = currentUsername;
+    }
+
+    public String getAccessKey() {
+        return accessKey;
+    }
+
+    public void setAccessKey(String accessKey) {
+        this.accessKey = accessKey;
     }
 }
