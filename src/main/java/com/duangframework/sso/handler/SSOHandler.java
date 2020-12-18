@@ -33,6 +33,7 @@ public class SSOHandler implements IHandler {
     private String filterConfigFile;
     public static SSOFilter[] SSO_FILTERS;
     private static Properties prop = null;
+    private String ssoLoginUri;
 
     public SSOHandler() {
         this(Const.FILTER_CONFIG_FILE);
@@ -46,6 +47,10 @@ public class SSOHandler implements IHandler {
     private void init() {
         prop = new Prop(filterConfigFile).getProperties();
         String filterChain = prop.getProperty("filter.chain");
+        ssoLoginUri = prop.getProperty("sso.login.url");
+        if (ToolsKit.isEmpty(ssoLoginUri)) {
+            ssoLoginUri = "/ssoLogin";
+        }
         if (filterChain != null && filterChain.length() > 0) {
             String[] filterClassFullNames = filterChain.split(";");
             SSO_FILTERS = new SSOFilter[filterClassFullNames.length];
@@ -72,8 +77,10 @@ public class SSOHandler implements IHandler {
 
     @Override
     public boolean doHandler(String target, IRequest request, IResponse response) throws MvcException {
-
-        // 转换成 Servlet 的 Request
+        // 只对指定的URI进行拦截处理
+        if (!target.equals(ssoLoginUri)) {
+            return true;
+        }
         if (SSO_FILTERS != null && SSO_FILTERS.length != 0) {
             HttpSession session = request.getSession();
             if (null == session) {
